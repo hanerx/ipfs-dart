@@ -7,10 +7,14 @@ import 'dart:convert' as JSON;
 
 /// Checks if you are awesome. Spoiler: you are.
 class Ipfs {
+  final String baseUrl;
+
+  Ipfs(this.baseUrl);
+
   Future getPeers() async {
     try {
       final response =
-          await Dio().get('http://127.0.0.1:5001/api/v0/swarm/peers');
+          await Dio().get('http://$baseUrl:5001/api/v0/swarm/peers');
       var data = response.toString();
       var json = JSON.jsonDecode(data);
 
@@ -30,7 +34,7 @@ class Ipfs {
   Future resolveDag(String cid) async {
     try {
       final response = await Dio().get(
-          'http://127.0.0.1:5001/api/v0/object/get?arg=$cid');
+          'http://$baseUrl:5001/api/v0/object/get?arg=$cid');
       var data = response.toString();
       var json = JSON.jsonDecode(data);
 
@@ -46,7 +50,7 @@ class Ipfs {
     Future getObject(String cid) async {
     try {
       final response = await Dio().get(
-          'http://127.0.0.1:5001/api/v0/object/get?arg=$cid');
+          'http://$baseUrl:5001/api/v0/object/get?arg=$cid');
       var data = response.toString();
       var json = JSON.jsonDecode(data);
 
@@ -66,7 +70,7 @@ class Ipfs {
   Future objectStats() async {
     try {
       final response = await Dio().get(
-          'http://127.0.0.1:5001/api/v0/object/stat?arg=QmYWquTmxMJbeA6AnAedb5CxaPhW8KyTBVkezfKjJTy5jH');
+          'http://$baseUrl:5001/api/v0/object/stat?arg=QmYWquTmxMJbeA6AnAedb5CxaPhW8KyTBVkezfKjJTy5jH');
       var data = response.toString();
       var json = JSON.jsonDecode(data);
 
