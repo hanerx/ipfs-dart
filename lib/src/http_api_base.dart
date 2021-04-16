@@ -8,23 +8,23 @@ import 'dart:convert' as JSON;
 /// Checks if you are awesome. Spoiler: you are.
 class Ipfs {
   final String baseUrl;
+  final int port;
+  Dio dio;
 
-  Ipfs(this.baseUrl);
+  Ipfs({this.baseUrl: '127.0.0.1', this.port: 5001}){
+    dio=Dio();
+  }
+
+  Ipfs.dio({this.baseUrl:'127.0.0.1',this.port:5001,this.dio});
 
   Future getPeers() async {
     try {
       final response =
-          await Dio().get('http://$baseUrl:5001/api/v0/swarm/peers');
+          await dio.post('http://$baseUrl:$port/api/v0/swarm/peers');
       var data = response.toString();
       var json = JSON.jsonDecode(data);
-
       var encoder = JsonEncoder.withIndent('  ');
       var prettyprint = encoder.convert(json);
-
-      //Object obj = Object.fromJson(json);
-      print(prettyprint);
-      //print(obj.data);
-      //print(obj.links);
       return prettyprint;
     } catch (e) {
       print(e);
@@ -33,8 +33,8 @@ class Ipfs {
 
   Future resolveDag(String cid) async {
     try {
-      final response = await Dio().get(
-          'http://$baseUrl:5001/api/v0/object/get?arg=$cid');
+      final response =
+          await dio.post('http://$baseUrl:$port/api/v0/object/get?arg=$cid');
       var data = response.toString();
       var json = JSON.jsonDecode(data);
 
@@ -47,10 +47,10 @@ class Ipfs {
     }
   }
 
-    Future getObject(String cid) async {
+  Future getObject(String cid) async {
     try {
-      final response = await Dio().get(
-          'http://$baseUrl:5001/api/v0/object/get?arg=$cid');
+      final response =
+          await dio.post('http://$baseUrl:$port/api/v0/object/get?arg=$cid');
       var data = response.toString();
       var json = JSON.jsonDecode(data);
 
@@ -58,8 +58,6 @@ class Ipfs {
       //String prettyprint = encoder.convert(json);
 
       var object = Object.fromJson(json);
-      print(object.data);
-
       return object.data;
       //print(prettyprint);
     } catch (e) {
@@ -67,10 +65,22 @@ class Ipfs {
     }
   }
 
+  Future<List<int>> catBytes(String cid) async {
+    try {
+      final response = await dio.post(
+          'http://$baseUrl:$port/api/v0/cat?arg=$cid',
+          options: Options(responseType: ResponseType.bytes));
+      return response.data;
+    } catch (e) {
+      throw e;
+    }
+    return null;
+  }
+
   Future objectStats() async {
     try {
-      final response = await Dio().get(
-          'http://$baseUrl:5001/api/v0/object/stat?arg=QmYWquTmxMJbeA6AnAedb5CxaPhW8KyTBVkezfKjJTy5jH');
+      final response = await dio.post(
+          'http://$baseUrl:$port/api/v0/object/stat?arg=QmYWquTmxMJbeA6AnAedb5CxaPhW8KyTBVkezfKjJTy5jH');
       var data = response.toString();
       var json = JSON.jsonDecode(data);
 
@@ -93,6 +103,7 @@ class Ipfs {
 
 class Object {
   List links;
+
   //String cid;
   String data;
 
