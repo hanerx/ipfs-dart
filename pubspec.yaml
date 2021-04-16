@@ -7,7 +7,7 @@ environment:
   sdk: '>=2.5.0 <3.0.0'
 
 dependencies:
-  dio: ^3.0.0
+  dio: ^4.0.0
   path: ^1.6.0
 
   grpc: ^2.1.3
